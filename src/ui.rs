@@ -19,8 +19,8 @@ pub fn draw_settings_slider(
       Rectangle::new(
           gui_constants.gui_x as f32, 
           (gui_constants.gui_y + (gui_constants.gui_row_offset * row)) as f32, 
-          100.0,
-          50.0 
+          200.0,
+          25.0 
       ),
       None, 
       None, 
@@ -28,4 +28,23 @@ pub fn draw_settings_slider(
       min_val, 
       max_val
   )
+}
+
+pub fn draw_settings_toggle_group(
+  gui_constants: &GUIConstants,
+  draw: &mut RaylibDrawHandle,
+  row: i32,
+  _range: i32,
+  val: i32
+) -> i32 {
+  return draw.gui_toggle_group(
+    Rectangle::new(
+      gui_constants.gui_x as f32, 
+      (gui_constants.gui_y + (gui_constants.gui_row_offset * row)) as f32, 
+      200.0,
+      25.0
+    ), 
+    Some(rstr!("Bias")),
+    val
+  );
 }

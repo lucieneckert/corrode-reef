@@ -14,7 +14,7 @@ fn main() {
     let gui_constants = ui::GUIConstants {
      gui_x: 825,
      gui_y: 25,
-     gui_row_offset: 100,
+     gui_row_offset: 50,
     };
     
     // define initial board settings
@@ -42,9 +42,11 @@ fn main() {
         board.render(&mut draw, 8);
         // draw UI
         // draw.draw_text("corrode reef", gui_x, gui_y, 50, Color::WHITE);
-        reset = draw.gui_button(Rectangle::new(gui_constants.gui_x as f32, gui_constants.gui_y as f32 + 50.0, 100.0, 100.0), Some(rstr!("reset")));
+        reset = draw.gui_button(Rectangle::new(gui_constants.gui_x as f32, gui_constants.gui_y as f32, 100.0, 40.0), Some(rstr!("reset")));
         settings.num_colors = ui::draw_settings_slider(&gui_constants, &mut draw, "", 1, 2.0, 6.0, settings.num_colors as f32) as i32;
         settings.gravity = ui::draw_settings_slider(&gui_constants, &mut draw, "", 2, 0.0, 1.0, settings.gravity);
+        settings.momentum_factor = ui::draw_settings_slider(&gui_constants, &mut draw, "", 3, -1.0, 1.0, settings.momentum_factor);
+        settings.bias = ui::draw_settings_toggle_group(&gui_constants, &mut draw, 4, 3, 0);
         // #TODO: Move the render of the board to a separate thread from UI
         thread::sleep(Duration::from_millis(25));
     };
