@@ -24,36 +24,45 @@ pub struct Board {
 impl Board {
 
   pub fn step(&self, settings: &board_settings::Settings) -> Board {
-      let mut new_cells : Vec<Cell> = Vec::new();
-      for (i, cell) in self.cells.iter().enumerate() {
-          let idx = i as i32;
-          let x = idx % self.size_x;
-          let y = idx / self.size_x;
-          let old_color = cell.color;
-          let p = rand::random::<f32>() + cell.momentum as f32 * settings.momentum_factor;
-          let mut new_color = old_color;
-          if p < settings.prob_mutate {
-              let p = rand::random::<f32>();
-              if p < 0.25 && x > 0 {
-                  new_color = self.cells[(idx - 1) as usize].color;
-              } else if p < 0.5 && x < self.size_x - 1 {
-                  new_color = self.cells[(idx + 1) as usize].color;
-              } else if p < 0.75 && y > 0 {
-                  new_color = self.cells[(idx - self.size_x) as usize].color;
-              } else if y < self.size_y - 1{
-                  new_color = self.cells[(idx + self.size_x) as usize].color;
-              }
-          }
-          new_cells.push(Cell {
-              momentum:  if new_color == old_color {cell.momentum + 1} else {0},
-              color: new_color
-          })   
-      }
-      return Board {
-          size_x: self.size_x,
-          size_y: self.size_y,
-          cells: new_cells
-      }
+    // define probability constants from settings
+    let p_mutate_left = 0.25;
+    let p_mutate_right = p_mutate_left + 0.25;
+    let p_mutate_up = p_mutate_right + 0.25 + (settings.gravity * 0.25);
+    // let p_mutate_down = p_mutate_up + 0.25 + (settings.gravity * 0.25);
+    let mut new_cells : Vec<Cell> = Vec::new();
+    for (i, cell) in self.cells.iter().enumerate() {
+        let idx = i as i32;
+        let x = idx % self.size_x;
+        let y = idx / self.size_x;
+        let old_color = cell.color;
+        let p = rand::random::<f32>() + cell.momentum as f32 * settings.momentum_factor;
+        let mut new_color = old_color;
+        if p < settings.prob_mutate {
+            let p = rand::random::<f32>();
+            // mutate left
+            if p < p_mutate_left && x > 0 {
+                new_color = self.cells[(idx - 1) as usize].color;
+            // mutate right
+            } else if p < p_mutate_right && x < self.size_x - 1 {
+                new_color = self.cells[(idx + 1) as usize].color;
+            // mutate up
+            } else if p < p_mutate_up && y > 0 {
+                new_color = self.cells[(idx - self.size_x) as usize].color;
+            // mutate down
+            } else if y < self.size_y - 1{
+                new_color = self.cells[(idx + self.size_x) as usize].color;
+            }
+        }
+        new_cells.push(Cell {
+            momentum:  if new_color == old_color {cell.momentum + 1} else {0},
+            color: new_color
+        })   
+    }
+    return Board {
+        size_x: self.size_x,
+        size_y: self.size_y,
+        cells: new_cells
+    }
   }
 
   pub fn from_dim(x: i32, y: i32) -> Board {
@@ -64,8 +73,8 @@ impl Board {
       }
   }
 
-  // noteL num_colors <= 5
   pub fn randomize_cells(&self, num_colors: i32) -> Board {
+      // note: num_colors <= 6 
       let colors = vec![Color::WHITE, Color::PINK, Color::PURPLE, Color::YELLOW, Color::MAGENTA, Color::ORANGE, Color::SKYBLUE];
       let mut new_cells : Vec<Cell> = Vec::new();
       for (i, _cell) in self.cells.iter().enumerate() {
