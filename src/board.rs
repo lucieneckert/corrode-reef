@@ -66,7 +66,7 @@ impl Board {
 
   // noteL num_colors <= 5
   pub fn randomize_cells(&self, num_colors: i32) -> Board {
-      let colors = vec![Color::WHITE, Color::PINK, Color::PURPLE, Color::YELLOW, Color::MAGENTA];
+      let colors = vec![Color::WHITE, Color::PINK, Color::PURPLE, Color::YELLOW, Color::MAGENTA, Color::ORANGE, Color::SKYBLUE];
       let mut new_cells : Vec<Cell> = Vec::new();
       for (i, _cell) in self.cells.iter().enumerate() {
           let cell_color = colors[i % num_colors as usize];
