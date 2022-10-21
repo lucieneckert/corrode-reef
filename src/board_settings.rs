@@ -1,5 +1,9 @@
-// 🔃: Setting requires board refresh to update.
+pub enum BlendModes {
+  True,
+  // NeighborAvg,
+}
 
+// 🔃: Setting requires board refresh to update.
 pub struct Settings {
   
   // number of colors on the board. 🔃
@@ -16,5 +20,7 @@ pub struct Settings {
   // controls bias between mutating up or down. 
   pub gravity: f32, 
   // horizontal/vertical mutation choice bias
-  pub bias: i32
+  pub bias: i32,
+  // how to render each cell's final color
+  pub render_blend: BlendModes,
 }

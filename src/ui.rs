@@ -9,19 +9,24 @@ pub struct GUIConstants {
 pub fn draw_settings_slider(
   gui_constants: &GUIConstants,
   draw : &mut RaylibDrawHandle, 
-  _label: &str,
+  label: &std::ffi::CStr,
   row: i32,
   min_val: f32,
   max_val: f32,
   val: f32
 ) -> f32 {
+  let bounds = Rectangle::new(
+    gui_constants.gui_x as f32, 
+    (gui_constants.gui_y + (gui_constants.gui_row_offset * row)) as f32, 
+    200.0,
+    25.0 
+  );
+  draw.gui_label(bounds, Some(label));
   return draw.gui_slider(
-      Rectangle::new(
-          gui_constants.gui_x as f32, 
-          (gui_constants.gui_y + (gui_constants.gui_row_offset * row)) as f32, 
-          200.0,
-          25.0 
-      ),
+      Rectangle {
+        x: gui_constants.gui_x as f32 + 100.0, 
+        ..bounds
+      },
       None, 
       None, 
       val, 

@@ -54,7 +54,7 @@ impl Board {
             }
         }
         new_cells.push(Cell {
-            momentum:  if new_color == old_color {cell.momentum + 1} else {0},
+            momentum: if new_color == old_color {cell.momentum + 1} else {0},
             color: new_color
         })   
     }
@@ -91,10 +91,28 @@ impl Board {
       }
   }
 
-  pub fn render(&self, draw : &mut RaylibDrawHandle, scale: i32) {
+  pub fn render(&self, draw : &mut RaylibDrawHandle, blend : &board_settings::BlendModes, scale: i32) {
       for (i, cell) in self.cells.iter().enumerate() {
           let idx = i as i32;
-          draw.draw_rectangle(idx % self.size_x * scale, idx / self.size_y * scale, scale, scale, cell.color);
+          let cell_color : Color = match blend {
+            board_settings::BlendModes::True => cell.color,
+            // board_settings::BlendModes::NeighborAvg => average_color(vec![
+            //     &cell.color,
+            //     if i as i32 % self.size_x > 0 {self.cells[i - 1].color} else {cell.color},
+            //     if i as i32 % self.size_x < self.size_x - 1 {self.cells[i + 1].color} else {cell.color},
+            //     if i as i32 / self.size_x > 0 {self.cells[i - self.size_x as usize].color} else {cell.color},
+            //     if i as i32 / self.size_x < self.size_y - 1 {self.cells[i + self.size_x as usize].color} else {cell.color},
+            // ]),
+        };
+          draw.draw_rectangle(idx % self.size_x * scale, idx / self.size_y * scale, scale, scale, cell_color);
       }
   }
+}
+
+#[allow(dead_code)]
+fn average_color(cols : Vec<&Color>) -> Color {
+    let sum: i32 = cols.iter()
+      .map(|c| c.color_to_int())
+      .fold(0, |a, b| a + b);
+    return Color::get_color(sum / (cols.len() as i32));
 }
