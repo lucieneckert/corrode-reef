@@ -1,6 +1,6 @@
 pub enum BlendModes {
   True,
-  // NeighborAvg,
+  NeighborAvg,
 }
 
 // 🔃: Setting requires board refresh to update.

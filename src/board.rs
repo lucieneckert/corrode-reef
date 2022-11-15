@@ -96,13 +96,13 @@ impl Board {
           let idx = i as i32;
           let cell_color : Color = match blend {
             board_settings::BlendModes::True => cell.color,
-            // board_settings::BlendModes::NeighborAvg => average_color(vec![
-            //     &cell.color,
-            //     if i as i32 % self.size_x > 0 {self.cells[i - 1].color} else {cell.color},
-            //     if i as i32 % self.size_x < self.size_x - 1 {self.cells[i + 1].color} else {cell.color},
-            //     if i as i32 / self.size_x > 0 {self.cells[i - self.size_x as usize].color} else {cell.color},
-            //     if i as i32 / self.size_x < self.size_y - 1 {self.cells[i + self.size_x as usize].color} else {cell.color},
-            // ]),
+            board_settings::BlendModes::NeighborAvg => average_color(vec![
+                &cell.color,
+                if i as i32 % self.size_x > 0 {&self.cells[i - 1].color} else {&cell.color},
+                if i as i32 % self.size_x < self.size_x - 1 {&self.cells[i + 1].color} else {&cell.color},
+                if i as i32 / self.size_x > 0 {&self.cells[i - self.size_x as usize].color} else {&cell.color},
+                if i as i32 / self.size_x < self.size_y - 1 {&self.cells[i + self.size_x as usize].color} else {&cell.color},
+            ]),
         };
           draw.draw_rectangle(idx % self.size_x * scale, idx / self.size_y * scale, scale, scale, cell_color);
       }
@@ -111,8 +111,9 @@ impl Board {
 
 #[allow(dead_code)]
 fn average_color(cols : Vec<&Color>) -> Color {
-    let sum: i32 = cols.iter()
-      .map(|c| c.color_to_int())
-      .fold(0, |a, b| a + b);
-    return Color::get_color(sum / (cols.len() as i32));
+    let sum_hsv: Vector3 = cols.iter()
+      .map(|c| c.color_to_hsv())
+      .fold(Vector3{x: 0.0, y:0.0, z:0.0}, |acc, hsv| acc + hsv);
+    let avg_hsv = sum_hsv / cols.len() as f32;
+    return Color::color_from_hsv(avg_hsv.x, avg_hsv.y, avg_hsv.z);
 }

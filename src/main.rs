@@ -26,7 +26,7 @@ fn main() {
         momentum_factor: 0.01,
         gravity: 0.0,
         bias: 0,
-        render_blend: board_settings::BlendModes::True,
+        render_blend: board_settings::BlendModes::NeighborAvg,
     };
     let mut board = board::Board::from_dim(settings.size, settings.size).randomize_cells(settings.num_colors);
     let mut reset = false;
